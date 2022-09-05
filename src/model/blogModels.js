@@ -14,14 +14,14 @@ const blogSchema = new mongoose.Schema({
         ref: "blogAuthor"
     }, 
     tags: [String],
-    category: [{
+    category: {
         type: String, 
         required: true
-    }], 
-    subcategory: [{
-        type: String, 
+    }, 
+    subcategory: {
+        type: [String], 
         required: true
-    }],
+    },
     deletedAt: {type:Date},
     isDeleted: {type:Boolean, default: false}, 
     publishedAt: {type:Date}, 
