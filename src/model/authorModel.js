@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const authorShema = new mongoose.Schema(
+const authorSchema = new mongoose.Schema(
   {
     fname: {
       type: String,
@@ -13,7 +13,7 @@ const authorShema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      enum: [Mr, Mrs, Miss],
+      enum: ["Mr", "Mrs", "Miss"],
     },
     email: {
       type: String,
@@ -25,6 +25,6 @@ const authorShema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Author", authorSchema);
+module.exports = mongoose.model("blogAuthor", authorSchema);
 
 // { fname: { mandatory}, lname: {mandatory}, title: {mandatory, enum[Mr, Mrs, Miss]}, email: {mandatory, valid email, unique}, password: {mandatory} }

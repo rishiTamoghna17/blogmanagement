@@ -11,7 +11,7 @@ const blogSchema = new mongoose.Schema({
         }, 
     authorId: {
         type: ObjectId,
-        ref: "Author"
+        ref: "blogAuthor"
     }, 
     tags: [String],
     category: [{
