@@ -39,7 +39,7 @@ const authors= async function (req, res) {
         if(!isValid(authorData.email)){
             return res.status(400).send({status:false,message:"Please provide a email"})
         }
-        if(!validator.email){
+        if(!validator.validate(authorData.email)){
             return res.status(400).send({status:false,message:"Please provide a valid email"})
         }
 
