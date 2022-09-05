@@ -24,13 +24,13 @@ const authors= async function (req, res) {
             return res.status(400).send({status:false,message:"Please provide a valid fname"})
         }
         if(!(/^[a-z ,.'-]+$/i).test(authorData.fname)){
-            return res.status(400).send({status:false,message:"First name should be in alphabate"})
+            return res.status(400).send({status:false,message:"First name should not be in alphabate"})
         }
         if(!isValid(authorData.lname)){
             return res.status(400).send({status:false,message:"Please provide a valid lname"})
         }
         if(!(/^[a-z ,.'-]+$/i).test(authorData.lname)){
-            return res.status(400).send({status:false,message:""})
+            return res.status(400).send({status:false,message:"last name should not be in alphabate"})
         }
         if(!isValidTitle(authorData.title)){
             return res.status(400).send({status:false,message:"title is missing"})
