@@ -7,11 +7,11 @@ const blog = async function(req,res){
     try {
         let blogData= req.body
         let authorId = req.body
-       let author = await authorModel.findById(authorId)
         if(!authorId)
         {
             return res.send("author id not found")
         }
+       let author = await authorModel.findById(authorId)
         if(author!== authorId){
            return res.send("invalid author")
         }
