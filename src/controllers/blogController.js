@@ -1,7 +1,7 @@
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const blogModel = require("../model/blogModel")
 const authorModel = require("../model/authorModel")
+const blogModel = require("../model/blogModels")
 
 const blog = async function(req,res){
     try {
@@ -9,11 +9,11 @@ const blog = async function(req,res){
         let authorId = req.body
         if(!authorId)
         {
-            return res.send("author id not found")
+            return res.status(403).send("author id not found")
         }
        let author = await authorModel.findById(authorId)
         if(author!== authorId){
-           return res.send("invalid author")
+           return res.status(403).send("invalid author")
         }
         let savedBlog= await blogModel.create(blogData)
         res.status(201).send({msg: savedBlog})
