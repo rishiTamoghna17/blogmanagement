@@ -131,7 +131,26 @@ const getblog = async function (req, res) {
     res.status(500).send({ msg: "Error", error: err.message });
   }
 }
-//del blog
+//update/put blog
+const updateBlog = async function (req, res) {
+    try{
+      let blogId = req.params
+    let blogs = await blogModel.findById(blogId);
+    if (!blogs) {
+      return res.status(404).send("blog doesn't exists");
+    }if( blogs.isDeleted==true){
+      return res.status(404).send("This blog is deleted")
+    }
+    let blogData = req.body;
+    let updateBlog = await blogModel.findOneAndUpdate({ _id: blogId }, blogData,{new : true});
+    res.status(201).send({ status: true, data: updateBlog });
+  }
+  catch(err){
+    res.status(500).send({msg: err.message})
+  }
+  }
+  
+// del blog
 const deleteBlog = async function(req, res){
     try{
 
@@ -151,6 +170,8 @@ const deleteBlog = async function(req, res){
       }
     }catch(err){
         res.status(500).send({msg : err.message})
+    }
+}
 //delete blog by params
 const deleteBlogByParam = async function (req, res) {
   try {
@@ -245,10 +266,13 @@ const deleteBlogByParam = async function (req, res) {
   } catch (err) {
     res.status(500).send({ msg: err.message });
   }
-};
+}
+
+
 
 
 module.exports.blog = blog;
 module.exports.deleteBlog = deleteBlog;
 module.exports.deleteBlogByParam = deleteBlogByParam;
 module.exports.getblog = getblog;
+module.exports.updateBlog = updateBlog;
