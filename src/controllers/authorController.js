@@ -15,7 +15,7 @@ const isValidTitle = function(title){
 
 const authors= async function (req, res) {
     try {
-        let authorData= req.body
+        let authorData= req.body  
         // console.log(authorData.fname)
         if(Object.keys(authorData).length===0){
             return res.status(400).send({status:false,message:"Please give some data"})
@@ -30,7 +30,7 @@ const authors= async function (req, res) {
             return res.status(400).send({status:false,message:"Please provide a valid lname"})
         }
         if(!(/^[a-z ,.'-]+$/i).test(authorData.lname)){
-            return res.status(400).send({status:false,message:""})
+            return res.status(400).send({status:false,message:"invalid last name"})
         }
         if(!isValidTitle(authorData.title)){
             return res.status(400).send({status:false,message:"title is missing"})
@@ -42,7 +42,7 @@ const authors= async function (req, res) {
         if(!validator.email){
             return res.status(400).send({status:false,message:"Please provide a valid email"})
         }
-
+  
         if(!isValid(authorData.password)){
             return res.status(400).send({status:false,message:"Please provide a valid password"})
         }
