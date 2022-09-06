@@ -32,11 +32,6 @@ const blog = async function (req, res) {
         .status(400)
         .send({ status: false, message: "Please provide a valid body" });
     }
-    if (!/^[a-z ,.'-]+$/i.test(blogData.body)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "body should be in alphabate" });
-    }
 
     if (!isValid(blogData.tags)) {
       return res
@@ -83,7 +78,6 @@ const getblog = async function (req, res) {
       obj.subcategory = subcategory;
     }
     let saveData = await blogModel.find(obj);
-    console.log(obj)
     return res.status(200).send({ status: true, data: saveData });
   } catch (err) {
     res.status(500).send({ msg: "Error", error: err.message });
@@ -103,10 +97,10 @@ const updateBlog = async function (req, res) {
     let blogData = req.body;
     let updateBlog = await blogModel.findOneAndUpdate(
       { _id: blogId },
-      {blogData, isPublished: true, publishedAt: new Date()  },
+      {blogData,publishedAt: new Date()  },
       { new: true }
     );
-    res.status(201).send({ status: true, data: updateBlog });
+    res.status(200).send({ status: true, data: updateBlog });
   } catch (err) {
     res.status(500).send({ msg: err.message });
   }
@@ -128,7 +122,7 @@ const deleteBlog = async function (req, res) {
         { new: true }
       );
       res
-        .status(201)
+        .status(200)
         .send({
           status: true,
           msg: "blog is deleted successfully",
