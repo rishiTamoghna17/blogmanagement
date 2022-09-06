@@ -96,4 +96,23 @@ const blog = async function (req, res) {
     res.status(500).send({ msg: "Error", error: err.message });
   }
 };
+
+
+
+const getblog = async function (req, res) {
+
+    try {
+        let data = req.query
+        let allblog = await blogModel.find({ $and: [data, { isDeleted: false }, { isPublished: true }] });
+        res.send({ status: true, msg: allblog })
+    } catch (error) {
+        res.status(500).send({ msg: "Error", error: err.message })
+    }
+
+}
+
+
+
+
 module.exports.blog = blog;
+module.exports.getblog=getblog
