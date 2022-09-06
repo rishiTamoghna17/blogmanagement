@@ -134,7 +134,7 @@ const getblog = async function (req, res) {
 //update/put blog
 const updateBlog = async function (req, res) {
     try{
-      let blogId = req.params
+      let blogId = req.params.blogId
     let blogs = await blogModel.findById(blogId);
     if (!blogs) {
       return res.status(404).send("blog doesn't exists");
@@ -142,7 +142,7 @@ const updateBlog = async function (req, res) {
       return res.status(404).send("This blog is deleted")
     }
     let blogData = req.body;
-    let updateBlog = await blogModel.findOneAndUpdate({ _id: blogId }, blogData,{new : true});
+    let updateBlog = await blogModel.findOneAndUpdate({ _id: blogId }, {isPublished:true,publishedAt: new Date(),blogData},{new : true});
     res.status(201).send({ status: true, data: updateBlog });
   }
   catch(err){

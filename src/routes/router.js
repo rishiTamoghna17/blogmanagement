@@ -11,6 +11,7 @@ router.get("/test-me", function (req, res) {
 router.post("/authors", authorController.authors)
 router.post("/blog", blogController.blog)
 router.get("/getblog", blogController.getblog)
+router.get("/blogs/:blogId", blogController.updateBlog)
 router.delete("/deleteBlog/:blogId", blogController.deleteBlog)
 
 
