@@ -61,7 +61,6 @@ const blog = async function (req, res) {
     //   return res
     //     .status(400)
     //     .send({ status: false, message: "subcategory should be in alphabate" });
-<<<<<<< HEAD
     // }
 
     // const isDeleted = await blogModel.findOneAndUpdate(
@@ -78,7 +77,6 @@ const blog = async function (req, res) {
     //   { publishedAt: new Date() }
     // );
     // res.send({ status: true, data: isPublished });
-=======
     // }
 
     // const isDeleted = await blogModel.findOneAndUpdate(
@@ -89,8 +87,6 @@ const blog = async function (req, res) {
     // // if(blogData.isDeleted===true){
     // //     blogData['deletedAt']=new Date()
     // // }
->>>>>>> bc47b31c6103368e66ef7002ea60f6a97dc7ae31
-
     // const isPublished = await blogModel.findOneAndUpdate(
     //   { isPublished: true },
     //   { publishedAt: new Date() }
@@ -108,7 +104,6 @@ const blog = async function (req, res) {
     // if (author !== authorId) {
     //   return res.status(403).send("invalid author");
     // }
-<<<<<<< HEAD
     // let authorId = req.body.authorId;
     // if (!authorId) {
     //   return res.status(403).send("author id not found");
@@ -117,8 +112,6 @@ const blog = async function (req, res) {
     // if (author !== authorId) {
     //   return res.status(403).send("invalid author");
     // }
-=======
->>>>>>> bc47b31c6103368e66ef7002ea60f6a97dc7ae31
 
     let savedBlog = await blogModel.create(blogData);
     res.status(201).send({ msg: savedBlog });
@@ -126,7 +119,7 @@ const blog = async function (req, res) {
     res.status(500).send({ msg: "Error", error: err.message });
   }
 };
-
+//get blog
 const getblog = async function (req, res) {
   try {
     let data = req.query;
@@ -137,39 +130,8 @@ const getblog = async function (req, res) {
   } catch (error) {
     res.status(500).send({ msg: "Error", error: err.message });
   }
-};
-
-const deleteBlog = async function (req, res) {
-  try {
-    let blogId = req.params.blogId;
-    let blog = await blogModel.findById(blogId);
-    if (blog.isDeleted == false) {
-      return res.status(200).send("blog exist");
-    } else if (blog.isDeleted == true) {
-      res.status(404).send("This blog is deleted or doesn't exist");
-    } else {
-      let deleteBlog = await blogModel.findOneAndUpdate(
-        { _id: blogId },
-        { isDeleted: true },
-        { new: true }
-      );
-      res
-        .status(201)
-        .send({
-          status: true,
-          msg: "blog is deleted successfully",
-          data: deleteBlog,
-        });
-    }
-  } catch (err) {
-    res.status(500).send({ msg: err.message });
-  }
-};
-
-<<<<<<< HEAD
 }
-
-
+//del blog
 const deleteBlog = async function(req, res){
     try{
 
@@ -189,23 +151,20 @@ const deleteBlog = async function(req, res){
       }
     }catch(err){
         res.status(500).send({msg : err.message})
-=======
+//delete blog by params
 const deleteBlogByParam = async function (req, res) {
   try {
     let category = req.params["category"];
     let categoryBlog = await blogModel.findById(category);
     if (!categoryBlog) {
       return res.status(404).send("This blog is deleted or doesn't exist");
->>>>>>> bc47b31c6103368e66ef7002ea60f6a97dc7ae31
     }
     let deleteBlogCategory = await blogModel.findOneAndUpdate(
-      { _id: blogId },
+      { _id: blog },
       { isDeleted: true },
       { new: true }
     );
-    res
-      .status(201)
-      .send({
+    res.status(201).send({
         status: true,
         msg: "blog is deleted successfully",
         data: deleteBlogCategory,
@@ -221,9 +180,7 @@ const deleteBlogByParam = async function (req, res) {
       { isDeleted: true },
       { new: true }
     );
-    res
-      .status(201)
-      .send({
+    res.status(201).send({
         status: true,
         msg: "blog is deleted successfully",
         data: deleteBlogByAuthor,
@@ -234,8 +191,9 @@ const deleteBlogByParam = async function (req, res) {
     if (!tagBlog) {
       return res.status(404).send("This blog is deleted or doesn't exist");
     }
+    
     let deleteBlogByTag = await blogModel.findOneAndUpdate(
-      { _id: blogId },
+      { _id: blog },
       { isDeleted: true },
       { new: true }
     );
@@ -288,6 +246,7 @@ const deleteBlogByParam = async function (req, res) {
     res.status(500).send({ msg: err.message });
   }
 };
+
 
 module.exports.blog = blog;
 module.exports.deleteBlog = deleteBlog;
