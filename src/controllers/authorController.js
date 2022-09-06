@@ -15,7 +15,7 @@ const isValidTitle = function(title){
 
 const authors= async function (req, res) {
     try {
-        let authorData= req.body
+        let authorData= req.body  
         // console.log(authorData.fname)
         if(Object.keys(authorData).length===0){
             return res.status(400).send({status:false,message:"Please give some data"})
@@ -24,13 +24,13 @@ const authors= async function (req, res) {
             return res.status(400).send({status:false,message:"Please provide a valid fname"})
         }
         if(!(/^[a-z ,.'-]+$/i).test(authorData.fname)){
-            return res.status(400).send({status:false,message:"First name should be in alphabate"})
+            return res.status(400).send({status:false,message:"First name should not be in alphabate"})
         }
         if(!isValid(authorData.lname)){
             return res.status(400).send({status:false,message:"Please provide a valid lname"})
         }
-        if(!(/^[a-z ,.'-]+$/i).test(authorData.lname)){
-            return res.status(400).send({status:false,message:""})
+            if(!(/^[a-z ,.'-]+$/i).test(authorData.lname)){
+            return res.status(400).send({status:false,message:"last name should not be in alphabate"})
         }
         if(!isValidTitle(authorData.title)){
             return res.status(400).send({status:false,message:"title is missing"})
@@ -39,8 +39,14 @@ const authors= async function (req, res) {
         if(!isValid(authorData.email)){
             return res.status(400).send({status:false,message:"Please provide a email"})
         }
-        if(!validator.email){
+        if(!validator.validate(authorData.email)){
             return res.status(400).send({status:false,message:"Please provide a valid email"})
+        }
+        
+        const presentEmail = req.body.email
+        const dbemail = await authorModel.findOne({email:presentEmail})
+        if(presentEmail===dbemail.email){
+            return res.status(400).send({status:false,message:"email is already used"})
         }
 
         if(!isValid(authorData.password)){
