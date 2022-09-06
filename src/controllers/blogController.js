@@ -111,8 +111,63 @@ const getblog = async function (req, res) {
 
 }
 
+const deleteBlog = async function(req, res){
+    try{
+
+        let blogId = req.params.blogId;
+        let blog = await blogModel.findById(blogId);
+        if (blog.isDeleted == false) {
+          return res.status(200).send("blog exist");
+        } else if (blog.isDeleted == true){
+          res.status(404).send("This blog is deleted or doesn't exist")
+        } else{
+        let deleteBlog = await blogModel.findOneAndUpdate(
+          { _id: blogId },
+          { isDeleted: true },
+          { new: true }
+        );
+        res.status(201).send({ status: true, msg : "blog is deleted successfully", data: deleteBlog });
+      }
+    }catch(err){
+        res.status(500).send({msg : err.message})
+    }
+}
+
+const deleteBlogByParam = async function(req, res){
+    try{
+
+        let blogId = req.params["category"]
+        let blog = await blogModel.findById(blogId);
+        if (!blog) {
+          return res.status(404).send("This blog is deleted or doesn't exist");
+        } 
+        let deleteBlog = await blogModel.findOneAndUpdate(
+          { _id: blogId },
+          { isDeleted: true },
+          { new: true }
+        );
+        res.status(201).send({ status: true, msg : "blog is deleted successfully", data: deleteBlog });
+
+        let author = req.params["authorId"]
+        let authorBlog = await blogModel.findById(author);
+        if (!authorBlog) {
+          return res.status(404).send("This blog is deleted or doesn't exist");
+        } 
+        let deleteBlogByAuthor = await blogModel.findOneAndUpdate(
+          { _id: blogId },
+          { isDeleted: true },
+          { new: true }
+        );
+        res.status(201).send({ status: true, msg : "blog is deleted successfully", data: deleteBlogByAuthor });
 
 
+      }
+      catch(err){
+        res.status(500).send({msg : err.message})
+    }
+}
 
-module.exports.blog = blog;
+module.exports.blog = blog
+module.exports.deleteBlog = deleteBlog
+module.exports.deleteBlogByParam  = deleteBlogByParam 
 module.exports.getblog=getblog
