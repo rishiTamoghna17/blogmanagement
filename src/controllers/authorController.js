@@ -24,13 +24,17 @@ const authors= async function (req, res) {
             return res.status(400).send({status:false,message:"Please provide a valid fname"})
         }
         if(!(/^[a-z ,.'-]+$/i).test(authorData.fname)){
-            return res.status(400).send({status:false,message:"First name should be in alphabate"})
+            return res.status(400).send({status:false,message:"First name should not be in alphabate"})
         }
         if(!isValid(authorData.lname)){
             return res.status(400).send({status:false,message:"Please provide a valid lname"})
         }
         if(!(/^[a-z ,.'-]+$/i).test(authorData.lname)){
+<<<<<<< HEAD
             return res.status(400).send({status:false,message:"invalid last name"})
+=======
+            return res.status(400).send({status:false,message:"last name should not be in alphabate"})
+>>>>>>> f6cfb980415a715d79c48bcad85cc4ade6e3c915
         }
         if(!isValidTitle(authorData.title)){
             return res.status(400).send({status:false,message:"title is missing"})
@@ -39,7 +43,7 @@ const authors= async function (req, res) {
         if(!isValid(authorData.email)){
             return res.status(400).send({status:false,message:"Please provide a email"})
         }
-        if(!validator.email){
+        if(!validator.validate(authorData.email)){
             return res.status(400).send({status:false,message:"Please provide a valid email"})
         }
   
