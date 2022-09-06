@@ -29,12 +29,8 @@ const authors= async function (req, res) {
         if(!isValid(authorData.lname)){
             return res.status(400).send({status:false,message:"Please provide a valid lname"})
         }
-        if(!(/^[a-z ,.'-]+$/i).test(authorData.lname)){
-<<<<<<< HEAD
-            return res.status(400).send({status:false,message:"invalid last name"})
-=======
+            if(!(/^[a-z ,.'-]+$/i).test(authorData.lname)){
             return res.status(400).send({status:false,message:"last name should not be in alphabate"})
->>>>>>> f6cfb980415a715d79c48bcad85cc4ade6e3c915
         }
         if(!isValidTitle(authorData.title)){
             return res.status(400).send({status:false,message:"title is missing"})
@@ -46,7 +42,13 @@ const authors= async function (req, res) {
         if(!validator.validate(authorData.email)){
             return res.status(400).send({status:false,message:"Please provide a valid email"})
         }
-  
+        
+        const presentEmail = req.body.email
+        const dbemail = await authorModel.findOne({email:presentEmail})
+        if(presentEmail===dbemail.email){
+            return res.status(400).send({status:false,message:"email is aldeady used"})
+        }
+
         if(!isValid(authorData.password)){
             return res.status(400).send({status:false,message:"Please provide a valid password"})
         }
