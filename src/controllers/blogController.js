@@ -87,6 +87,7 @@ const getblog = async function (req, res) {
 const updateBlog = async function (req, res) {
   try {
     let blogId = req.params.blogId;
+    
     let blogs = await blogModel.findById(blogId);
     if (!blogs) {
       return res.status(404).send("blog doesn't exists");
@@ -95,12 +96,14 @@ const updateBlog = async function (req, res) {
       return res.status(404).send("This blog is deleted");
     }
     let blogData = req.body;
+    const { title, body, tags, subcategory,category } = blogData
     let updateBlog = await blogModel.findOneAndUpdate(
       { _id: blogId },
-      {blogData,publishedAt: new Date()  },
+      { $set: { title: title, body:body, isPublished: true, publishedAt: new Date() },
+       $push: { tags: tags, subcategory: subcategory, category:category} },
       { new: true }
     );
-    res.status(200).send({ status: true, data: updateBlog });
+    res.status(201).send({ status: true, data: updateBlog });
   } catch (err) {
     res.status(500).send({ msg: err.message });
   }
