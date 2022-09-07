@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const authorModel = require("../model/authorModel")
 const validator = require("email-validator");
+const jwt = require("jsonwebtoken")
 
 
 //Authour Creation
