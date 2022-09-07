@@ -43,9 +43,9 @@ const authors= async function (req, res) {
             return res.status(400).send({status:false,message:"Please provide a valid email"})
         }
         
-        const presentEmail = req.body.email
-        const dbemail = await authorModel.findOne({email:presentEmail})
-        if(presentEmail===dbemail.email){
+        //const presentEmail = authorData.email
+        const dbemail = await authorModel.findOne({email:authorData.email})
+        if(dbemail){
             return res.status(400).send({status:false,message:"email is already used"})
         }
 
