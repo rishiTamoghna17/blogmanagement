@@ -52,7 +52,6 @@ const authors= async function (req, res) {
         if(!isValid(authorData.password)){
             return res.status(400).send({status:false,message:"Please provide a valid password"})
         }
-        
         let savedAuthor= await authorModel.create(authorData)
         res.status(201).send({msg: savedAuthor})
     } catch (err) {
@@ -60,5 +59,27 @@ const authors= async function (req, res) {
         }
 } 
 
+//login
+const authorlogin = async function (req, res) {
+    let userName = req.body.emailId;
+    let password = req.body.password;
+  
+    let author = await authorModel.findOne({ emailId: userName, password: password });
+    if (!author)
+     return res.send({ status: false,msg: "username or the password is not corerct"});
+    
+    let token = jwt.sign(
+      {
+        userId: author._id.toString(),
+        batch: "plutonium",
+        organisation: "FunctionUp",
+      },
+      "suraj_tamoghna_kashish_tanweer"
+    );
+    res.setHeader("x-api-key", token);
+    res.send({ status: true, token: token });
+  };
+
 
 module.exports.authors = authors
+module.exports.authorlogin = authorlogin
