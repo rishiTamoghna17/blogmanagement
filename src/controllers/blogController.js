@@ -32,6 +32,18 @@ const blog = async function (req, res) {
         .status(400)
         .send({ status: false, message: "Please provide a valid body" });
     }
+    if(!blogData.authorId){
+      return res.status(400).send({status: false, message: "Please provide authorId"})
+    }
+    if(!mongoose.isValidObjectId(blogData.authorId)){
+      return res.status(400).send({status:false,message:"Invalid authorId"})
+    }
+    let authorId= blogData.authorId
+    let validAuthorId=await authorModel.findById(authorId)
+    if(!validAuthorId){
+      return res.status(400).send({status:false,message:"id is not valid"})
+    }
+
 
     if (!isValid(blogData.tags)) {
       return res
