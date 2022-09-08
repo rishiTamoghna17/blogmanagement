@@ -109,29 +109,28 @@ const getblog = async function (req, res) {
       }
     }
     if (subcategory) {
-      let verifyCategory = await blogModel.findOne({ subcategory: subcategory })
-      if (!verifyCategory) {
-        return res.status(400).send({ status: false, msg: 'No blogs in this subcategory exist' })
+      let verifySubCategory = await blogModel.findOne({ subcategory: subcategory })
+      if (!verifySubCategory) {
+        return res.status(400).send({ status: false, msg: 'No blogs in this subcategory exist'})
       }
     }
 
 
     if (authorId) {
-      
       if (!mongoose.isValidObjectId(authorId))
         return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
     }
-
-    let GetRecord = await blogModel.find(filter)
-
-
-    if (GetRecord.length == 0) {
-      return res.status(404).send({
-        data: "No such document exist with the given attributes.",
-      });
+      let verifyAuthorId = await blogModel.findOne({ authorId: authorId})
+      if (!verifyAuthorId) {
+        return res.status(400).send({ status: false, msg: 'No blogs with this AuthrId' })
+      }
+      
+    
+    let getRecord = await blogModel.find(filter)
+    if(!getRecord){
+      return res.status(404).send({ status: false, msg: 'not found' })
     }
-
-    res.status(200).send({ status: true, data: GetRecord });
+    return res.status(200).send({ status: true, data: getRecord });
   } catch (err) {
     res.status(500).send({ status: false, data: err.message });
   }

@@ -62,13 +62,19 @@ const authors= async function (req, res) {
 
 //login
 const authorlogin = async function (req, res) {
-    let userName = req.body.emailId;
-    let password = req.body.password;
-  
-    let author = await authorModel.findOne({ emailId: userName, password: password });
+    let data= req.body;
+    let userName = data.userName;
+    let password = data.password;
+    let author = await authorModel.findOne({ email: userName, password: password });
     if (!author)
      return res.send({ status: false,msg: "username or the password is not corerct"});
-    
+
+    if (!validator.validate(userName))
+     return res.status(400).send({ status: false, msg: "Enter a valid user name address." }) 
+
+    if (!isValid(password)) 
+        res.status(400).send({ status: false, msg: "Please enter your password " })
+
     let token = jwt.sign(
       {
         userId: author._id.toString(),
@@ -82,5 +88,5 @@ const authorlogin = async function (req, res) {
   };
 
 
-module.exports.authors = authors
+module.exports.authors = authors,
 module.exports.authorlogin = authorlogin
