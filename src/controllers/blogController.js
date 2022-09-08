@@ -72,29 +72,53 @@ const blog = async function (req, res) {
 //get blog
 const getblog = async function (req, res) {
   try {
-    let obj = { isDeleted: false, isPublished: true };
-    let authorId = req.query.authorId;
-    let category = req.query.category;
-    let tags = req.query.tags;
-    let subcategory = req.query.subcategory;
-    if (authorId) {
-      obj.authorId = authorId;
-    }
+
+    let data = req.query;
+    let filter = {isDeleted: false, isPublished: true,...data};
+
+    const { authorId, category, tags, subcategory } = data
+
     if (category) {
-      obj.category = category;
+      let verifyCategory = await blogModel.findOne({ category: category })
+      if (!verifyCategory) {
+        return res.status(400).send({ status: false, msg: 'No blogs in this category exist' })
+      }
     }
     if (tags) {
-      obj.tags = tags;
+      let verifyTag = await blogModel.findOne({ tags: tags })
+      if (!verifyTag) {
+        return res.status(400).send({ status: false, msg: 'No blogs in this tags exist' })
+      }
     }
     if (subcategory) {
-      obj.subcategory = subcategory;
+      let verifyCategory = await blogModel.findOne({ subcategory: subcategory })
+      if (!verifyCategory) {
+        return res.status(400).send({ status: false, msg: 'No blogs in this subcategory exist' })
+      }
     }
-    let saveData = await blogModel.find(obj);
-    return res.status(200).send({ status: true, data: saveData });
+
+
+    if (authorId) {
+      
+      if (!mongoose.isValidObjectId(authorId))
+        return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
+    }
+
+    let GetRecord = await blogModel.find(filter)
+
+
+    if (GetRecord.length == 0) {
+      return res.status(404).send({
+        data: "No such document exist with the given attributes.",
+      });
+    }
+
+    res.status(200).send({ status: true, data: GetRecord });
   } catch (err) {
-    res.status(500).send({ msg: "Error", error: err.message });
+    res.status(500).send({ status: false, data: err.message });
   }
 };
+
 //update/put blog
 const updateBlog = async function (req, res) {
   try {
