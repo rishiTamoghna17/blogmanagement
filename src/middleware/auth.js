@@ -32,23 +32,27 @@ const authenticate = async function (req, res, next) {
 
 const authorization = async function (req, res, next) {
   try {
-    const token = req.headers['x-api-key']
+    const token = req.headers['x-api-key'] //we call headers with name x-api-key
     if (!token) res.status(401).send({ status: false, msg: "missing a mandatory token😒" })
+    // let decodedToken = jwt.verify(token, "FunctionUp-radon")
     let decodedToken = jwt.verify(
                   token,
                   "suraj_tamoghna_kashish_tanweer"
-                )
-                let authorId = decodedToken.authorId
+                );
+                console.log(decodedToken);
+                let userLoggedIn = decodedToken.userId
+    //let blogToBeModified = decodedToken.userId//problem
+    console.log(userLoggedIn);
     let blog = req.params.blogId
-    let blogData = await blogModel.findOne({ _id: blog })
-    console.log(userId)
-    console.log(blogData.authorId.toString())
 
-    if (blogData.authorId.toString() != authorId) {
+    let blogData = await blogModel.findOne({ _id: blog })
+    console.log(blogData.authorId.toString())
+      //console.log(blogData)
+    if (blogData.authorId.toString() != userLoggedIn) {
       return res.status(403).send({ status: false, msg: 'You are not authrized' })
     }
     next()
-  }  
+  }
   catch (error) {
       res.status(500).send({ status: false, Error: error.message })
   }
