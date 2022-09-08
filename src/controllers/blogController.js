@@ -36,7 +36,7 @@ const blog = async function (req, res) {
       return res.status(400).send({status: false, message: "Please provide authorId"})
     }
     if(!mongoose.isValidObjectId(blogData.authorId)){
-      return res.status(400).send({status:false,message:"Invalid authorId"})
+      return res.status(400).send({status:false,message:" invalid authorId length"})
     }
     let authorId= blogData.authorId
     let validAuthorId=await authorModel.findById(authorId)
@@ -61,6 +61,24 @@ const blog = async function (req, res) {
       return res
         .status(400)
         .send({ status: false, message: "Please provide a valid category" });
+    }
+    if (!/^[a-z ,.'-]+$/i.test(blogData.category)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "category should be in alphabate" });
+    }
+
+
+    if (!isValid(blogData.subcategory)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "Please provide a valid subcategory" });
+    }
+
+    if (!/^[a-z ,.'-]+$/i.test(blogData.subcategory)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "subcategory should be in alphabate" });
     }
 
     let savedBlog = await blogModel.create(blogData);
@@ -174,43 +192,31 @@ const deleteBlog = async function (req, res) {
 };
     //del by params
     const deleteBlogsByQuery = async function (req, res) {
-        try {
-            
-            //===================== if no filters are provided ================================
-            let obj = {};
-            let authorId = req.query.authorId;
-            let category = req.query.category;
-            let tags = req.query.tags;
-            let subcategory = req.query.subcategory;
-            let isPublished= req.query.isPublished;
-            if (authorId) {
-                obj.authorId = authorId;
-            }
-            if (category) {
-                obj.category = category;
-            }
-            if (tags) {
-                obj.tags= tags;
-            }
-            if (subcategory) {
-                obj.subcategory = subcategory;
-            }
-            if (isPublished) {
-                obj.isPublished =isPublished
-            }
-            let saveData = await blogModel.find(obj)
-            console.log(saveData)
-            let updateDeletdBlogData = await blogModel.updateMany(
-                { saveData},
-                { $set: { isDeleted: true, deletedAt: new Date() }, new: true })
-                
-                res.status(200).send({ status: true, message: updateDeletdBlogData })
-            }
-        catch (error) {
-          res.status(500).send({ status: false, Error: error.message })
-        }
+
+      try {
+          let {category, authorId, tags, subcategory, isPublished} = req.query
+  
+          let deleteData = await blogModel.updateMany({ 
+  
+              authorId : req.decodedToken.authorId,
+              isDeleted: false, $or: [{ authorId: authorId },
+              { isPublished: isPublished },
+              { tags: tags },
+              { category: category },
+              { subcategory: subcategory }] 
+          }, 
+          {$set:  {isDeleted: true}, deletedAt : Date.now()}, 
+              { new: true })
+  
+          if (deleteData.modifiedCount == 0) {
+              return res.status(404).send({status: false, msg: "All documents are already deleted"})
+          }
+  
+          return res.status(200).send({ status: true, data: deleteData, msg: "Now, following blogs are deleted " })
+      } catch (err) {
+          return res.status(500).send({ status: false, msg: err.message })
       }
-   
+  }
 
 
 module.exports.blog = blog;
