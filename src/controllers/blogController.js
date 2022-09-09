@@ -157,49 +157,38 @@ const deleteBlog = async function (req, res) {
     
   const deleteBlogsByQuery = async function (req, res) {
     try {
-      let data = req.query
+      let data = req.query;
+    let filter = {...data};
+    const { authorId, category, tags, subcategory } = data
+    if (category) {
+      let verifyCategory = await blogModel.findOne({ category: category })
+      if (!verifyCategory) {
+        return res.status(400).send({ status: false, msg: 'No blogs in this category exist' })
+      }
+    }
+    if (tags) {
+      let verifyTag = await blogModel.findOne({ tags: tags })
+      if (!verifyTag) {
+        return res.status(400).send({ status: false, msg: 'No blogs in this tags exist' })
+      }
+    }
+    if (subcategory) {
+      let verifySubCategory = await blogModel.findOne({ subcategory: subcategory })
+      if (!verifySubCategory) {
+        return res.status(400).send({ status: false, msg: 'No blogs in this subcategory exist'})
+      }
+    }
+    if (authorId) {
       
-  
-  
-      if (!Object.keys(data).length)
-        return res.status(400).send({ status: false, msg: "Please select some key for deletion." })
-      if (data.category) {
-        if (!isValid(data.category)) {
-          res.status(400).send({ status: false, msg: "Invalid Category " })
-        }
+      let verifyAuthorId = await blogModel.findOne({ authorId: authorId})
+      if (!verifyAuthorId) {
+        return res.status(400).send({ status: false, msg: 'No blogs with this AuthrId' })
       }
-      if (data.title) {
-        if (!isValid(data.title)) {
-          res.status(400).send({ status: false, msg: "Invalid title " })
-        }
-      }
-      if (data.subcategory) {
-        if (!isValid(data.subcategory)) {
-          res.status(400).send({ status: false, msg: "Invalid subcategory" })
-        }
-      }
-  
-      if(data.tags){
-        if(!isValid(data.tags)){
-          res.status(400).send({status:false,msg:"Invalid tags"})
-        }
-      }
-  
-      if (data.authorId) {
-        if (!data.authorId) return res.status(400).send({ status: false, msg: 'Author Id must be present' })
-  
-        if (!mongoose.isValidObjectId(data.authorId))
-          return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
-  
-        let authId = await authorModel.findById(data.authorId)
-  
-        if (!authId) { return res.status(400).send({ status: false, msg: "AuthorId doesn't exist." }) }
-      }
-  
-  
-  
-      let blogs = await blogModel.updateMany(  {data, isDeleted: false }, { isDeleted: true, deletedAt: Date.now() }, { new: true })
-  
+    }
+   
+      console.log(filter)
+      let blogs = await blogModel.updateMany(  {filter, isDeleted: false }, { isDeleted: true, deletedAt: Date.now() }, { new: true })
+      console.log(blogs)
       if (!blogs.modifiedCount)
         return res.status(404).send({ status: false, msg: "No documents Found" })
   
