@@ -126,8 +126,8 @@ const updateBlog = async function (req, res) {
     const { title, body, tags, subcategory,category } = blogData
     let updateBlog = await blogModel.findOneAndUpdate(
       { _id: blogId },
-      { $set: { title: title, body:body, isPublished: true, publishedAt: new Date() },
-       $push: { tags: tags, subcategory: subcategory, category:category} },
+      { $set: { title: title, isPublished: true, publishedAt: new Date() },
+       $push: { tags: tags, subcategory: subcategory} },
       { new: true }
     );
     res.status(201).send({ status: true, data: updateBlog });
@@ -157,21 +157,54 @@ const deleteBlog = async function (req, res) {
     
   const deleteBlogsByQuery = async function (req, res) {
     try {
-      let {category, authorId, tags, subcategory, isPublished} = req.query
-      let deleteData = await blogModel.updateMany({ 
-        authorId : req.decodedToken.authorId,
-        isDeleted: false, $or: [{ authorId: authorId },
-        { isPublished: isPublished },
-        { tags: tags },
-        { category: category },
-        { subcategory: subcategory }] 
-        }, {$set:  {isDeleted: true}, deletedAt : Date.now()}, { new: true })
-        
-        if (deleteData.modifiedCount == 0) {
-          return res.status(404).send({status: false, msg: "All documents are already deleted"})
-          }
-          return res.status(200).send({ status: true, data: deleteData, msg: "Now, following blogs are deleted " })
-      } catch (err) {
+      let data = req.query
+      
+  
+  
+      if (!Object.keys(data).length)
+        return res.status(400).send({ status: false, msg: "Please select some key for deletion." })
+      if (data.category) {
+        if (!isValid(data.category)) {
+          res.status(400).send({ status: false, msg: "Invalid Category " })
+        }
+      }
+      if (data.title) {
+        if (!isValid(data.title)) {
+          res.status(400).send({ status: false, msg: "Invalid title " })
+        }
+      }
+      if (data.subcategory) {
+        if (!isValid(data.subcategory)) {
+          res.status(400).send({ status: false, msg: "Invalid subcategory" })
+        }
+      }
+  
+      if(data.tags){
+        if(!isValid(data.tags)){
+          res.status(400).send({status:false,msg:"Invalid tags"})
+        }
+      }
+  
+      if (data.authorId) {
+        if (!data.authorId) return res.status(400).send({ status: false, msg: 'Author Id must be present' })
+  
+        if (!mongoose.isValidObjectId(data.authorId))
+          return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
+  
+        let authId = await authorModel.findById(data.authorId)
+  
+        if (!authId) { return res.status(400).send({ status: false, msg: "AuthorId doesn't exist." }) }
+      }
+  
+  
+  
+      let blogs = await blogModel.updateMany(  {data, isDeleted: false }, { isDeleted: true, deletedAt: Date.now() }, { new: true })
+  
+      if (!blogs.modifiedCount)
+        return res.status(404).send({ status: false, msg: "No documents Found" })
+  
+      res.status(200).send({ status: true, msg: `Total deleted document count:${blogs.modifiedCount}`, data: blogs })
+    } catch (err) {
           return res.status(500).send({ status: false, msg: err.message })
       }
   }
