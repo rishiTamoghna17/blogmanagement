@@ -123,10 +123,10 @@ const updateBlog = async function (req, res) {
       return res.status(404).send("This blog is deleted");
     }
     let blogData = req.body;
-    const { title, body, tags, subcategory,category } = blogData
+    const { title, body, tags, subcategory } = blogData
     let updateBlog = await blogModel.findOneAndUpdate(
       { _id: blogId },
-      { $set: { title: title, isPublished: true, publishedAt: new Date() },
+      { $set: { title: title,body: body, isPublished: true, publishedAt: new Date() },
        $push: { tags: tags, subcategory: subcategory} },
       { new: true }
     );
