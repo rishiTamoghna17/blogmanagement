@@ -9,7 +9,7 @@ const authenticate = async function (req, res, next) {
   try {
     let token = req.headers["x-api-key"];
     if (!token)
-      return res.status(404).send({ status: false, msg: "token must be present" });
+      return res.status(404).send({ status: false, msg: "missing a mandatory token😒" });
 
     let decodedToken = jwt.verify(token, "suraj_tamoghna_kashish_tanweer", (err, decode)=>{
       if (err){
@@ -33,7 +33,6 @@ const authorization = async function (req, res, next) {
     let userLoggedIn = decodedToken.userId;
     let blog = req.params.blogId
     let blogData = await blogModel.findOne({ _id: blog });
-    console.log(blogData.authorId.toString());
     
     if (blogData.authorId.toString() != userLoggedIn) {
       return res.status(403).send({ status: false, msg: "You are not authrized" });
@@ -72,4 +71,4 @@ const authorization = async function (req, res, next) {
 }
 
 
-module.exports = { authenticate, authorization,specialAuthorization };
+module.exports = { authenticate, authorization, specialAuthorization };
