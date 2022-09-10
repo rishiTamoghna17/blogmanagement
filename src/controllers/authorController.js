@@ -22,23 +22,23 @@ const authors = async function (req, res) {
       return res.status(400).send({ status: false, message: "Please give some data" });
     }
     if (!isValid(authorData.fname)) {
-      return res.status(400).send({ status: false, message: "Please provide a valid fname" });
+      return res.status(400).send({ status: false, message: "fname is missing or you left empty" });
     }
     if (!/^[a-z ,.'-]+$/i.test(authorData.fname)) {
-      return res.status(400).send({status: false,message: "First name should not be in alphabate",});
+      return res.status(400).send({status: false,message: "fname should be in alphabate",});
     }
     if (!isValid(authorData.lname)) {
-      return res.status(400).send({ status: false, message: "Please provide a valid lname" });
+      return res.status(400).send({ status: false, message: "lname is missing or you left empty" });
     }
     if (!/^[a-z ,.'-]+$/i.test(authorData.lname)) {
-      return res.status(400).send({status: false, message: "last name should not be in alphabate",});
+      return res.status(400).send({status: false, message: "lname should be in alphabate",});
     }
     if (!isValidTitle(authorData.title)) {
-      return res.status(400).send({ status: false, message: "title is missing" });
+      return res.status(400).send({ status: false, message: "title is missing or you left empty" });
     }
 
     if (!isValid(authorData.email)) {
-      return res.status(400).send({ status: false, message: "Please provide a email" });
+      return res.status(400).send({ status: false, message: "email is missing or you left empty" });
     }
     if (!validator.validate(authorData.email)) {
       return res.status(400).send({ status: false, message: "Please provide a valid email" });
@@ -48,8 +48,11 @@ const authors = async function (req, res) {
       return res.status(400).send({ status: false, message: "email is already used" });
     }
     if (!isValid(authorData.password)) {
-      return res.status(400).send({ status: false, message: "Please provide a valid password" });
+      return res.status(400).send({ status: false, message: "password is missing or you left empty" });
     }
+    if (authorData.password.length < 4 || authorData.password.length >=10) {
+      return res.status(400).send({ status: false, msg: "password length should be 4 to 10" })
+   }
 
     let savedAuthor = await authorModel.create(authorData);
     return res.status(201).send({ msg: savedAuthor });
@@ -66,19 +69,21 @@ const authorlogin = async function (req, res) {
   let password = data.password;
   let author = await authorModel.findOne({email: userName, password: password, });
 
+  if (Object.keys(data).length == 0)
+  return res.status(400).send({ status: false, msg: "userName and password is required...!" })
+  if (!data.userName)
+  return res.status(400).send({ status: false, msg: "userName is required...!" });
+  if (!data.password)
+      return res.status(400).send({ status: false, msg: "password is required...!" })
   if (!author)
-    return res.send({status: false, msg: "username or the password is not corerct",});
-  if (!validator.validate(userName))
-    return res.status(400).send({ status: false, msg: "Enter a valid user name address." });
-  if (!isValid(password))
-    res.status(400).send({ status: false, msg: "Please enter your password " });
+    return res.status(400).send({status: false, msg: "username or the password is incorerct",});
 
   let token = jwt.sign({
       userId: author._id.toString(),
       batch: "plutonium",
       organisation: "FunctionUp",}, "suraj_tamoghna_kashish_tanweer");
 
-  res.setHeader("x-api-key", token);
+  res.setHeader("x-api-key", token); 
   return res.status(200).send({ status: true, token: token });
 };
 

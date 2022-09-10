@@ -18,13 +18,10 @@ const blog = async function (req, res) {
       return res.status(400).send({ status: false, message: "Please give some data" });
     }
     if (!isValid(blogData.title)) {
-      return res.status(400).send({ status: false, message: "Please provide a valid title" });
-    }
-    if (!/^[a-z ,.'-]+$/i.test(blogData.title)) {
-      return res.status(400).send({ status: false, message: "title should be in alphabate" });
+      return res.status(400).send({ status: false, message: "title is missing or you left empty" });
     }
     if (!isValid(blogData.body)) {
-      return res.status(400).send({ status: false, message: "Please provide a valid body" });
+      return res.status(400).send({ status: false, message: "body is missing or you left empty" });
     }
     if(!blogData.authorId){
       return res.status(400).send({status: false, message: "Please provide authorId"})
@@ -35,26 +32,16 @@ const blog = async function (req, res) {
     let authorId= blogData.authorId
     let validAuthorId=await authorModel.findById(authorId)
     if(!validAuthorId){
-      return res.status(400).send({status:false,message:"id is not valid"})
+      return res.status(400).send({status:false,message:"authorId is not valid"})
     }
     if (!isValid(blogData.tags)) {
-      return res.status(400).send({ status: false, message: "tags should not be empty" });
+      return res.status(400).send({ status: false, message: "tags is missing or you left empty" });
     }
-    if (!/^[a-z ,.'-]+$/i.test(blogData.tags)) {
-      return res.status(400).send({ status: false, message: "tags should be in alphabate" });
-    }
-
     if (!isValid(blogData.category)) {
-      return res.status(400).send({ status: false, message: "Please provide a valid category" });
-    }
-    if (!/^[a-z ,.'-]+$/i.test(blogData.category)) {
-      return res.status(400).send({ status: false, message: "category should be in alphabate" });
+      return res.status(400).send({ status: false, message: "category is missing or you left empty" });
     }
     if (!isValid(blogData.subcategory)) {
-      return res.status(400).send({ status: false, message: "Please provide a valid subcategory" });
-    }
-    if (!/^[a-z ,.'-]+$/i.test(blogData.subcategory)) {
-      return res.status(400).send({ status: false, message: "subcategory should be in alphabate" });
+      return res.status(400).send({ status: false, message: " subcategory is missing or you left empty" });
     }
 
     let savedBlog = await blogModel.create(blogData);
@@ -69,6 +56,9 @@ const getblog = async function (req, res) {
   try {
 
     let data = req.query;
+    if (Object.keys(data).length === 0) {
+      return res.status(400).send({ status: false, message: "Please give some data" });
+    }
     let filter = {isDeleted: false, isPublished: true,...data};
     const { authorId, category, tags, subcategory } = data
 
@@ -94,11 +84,7 @@ const getblog = async function (req, res) {
       if (!mongoose.isValidObjectId(authorId))
         return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
     }
-      let verifyAuthorId = await blogModel.findOne({ authorId: authorId})
-      if (!verifyAuthorId) {
-        return res.status(400).send({ status: false, msg: 'No blogs with this AuthrId' })
-      }
-      
+     
     let getRecord = await blogModel.find(filter)
     if(!getRecord){
       return res.status(404).send({ status: false, msg: 'not found' })
