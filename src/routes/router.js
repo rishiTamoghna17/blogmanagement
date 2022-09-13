@@ -11,9 +11,9 @@ router.get("/test-me", function (req, res) {
 
 router.post("/authors", authorController.authors)
 router.post("/login", authorController.authorlogin)
-router.post("/blog",authenticate, blogController.blog)
-router.get("/getblog",authenticate, blogController.getblog)
-router.put("/blogs/:blogId",authenticate,authorization,blogController.updateBlog)
-router.delete("/deleteBlog/:blogId",authenticate,authorization, blogController.deleteBlog)
+router.post("/blogs",authenticate, blogController.blogs)
+router.get("/getblogs",authenticate, blogController.getblogs)
+router.put("/blogs/:blogId",authenticate,authorization,blogController.updateBlogs)
+router.delete("/deleteBlogs/:blogId",authenticate,authorization, blogController.deleteBlogs)
 router.delete("/deleteBlogsByQuery",authenticate,specialAuthorization,blogController.deleteBlogsByQuery)
 module.exports = router; 

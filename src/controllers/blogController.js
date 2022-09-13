@@ -11,7 +11,7 @@ const isValid = function (value) {
 
 //------------------ blog create------------//
 
-const blog = async function (req, res) {
+const blogs = async function (req, res) {
   try {
     let blogData = req.body;
     if (Object.keys(blogData).length === 0) {
@@ -52,7 +52,7 @@ const blog = async function (req, res) {
 };
 //--------------------get blog---------------------//
 
-const getblog = async function (req, res) {
+const getblogs = async function (req, res) {
   try {
 
     let data = req.query;
@@ -94,10 +94,10 @@ const getblog = async function (req, res) {
     res.status(500).send({ status: false, data: err.message });
   }
 };
-
+ 
 //--------------------update/put blog-------------------//
 
-const updateBlog = async function (req, res) {
+const updateBlogs = async function (req, res) {
   try {
     let blogId = req.params.blogId;
     
@@ -109,7 +109,8 @@ const updateBlog = async function (req, res) {
       return res.status(404).send("This blog is deleted");
     }
     let blogData = req.body;
-    const { title, body, tags, subcategory } = blogData
+    const { title, body, tags, subcategory } = blogData;
+
     let updateBlog = await blogModel.findOneAndUpdate(
       { _id: blogId },
       { $set: { title: title,body: body, isPublished: true, publishedAt: new Date() },
@@ -124,7 +125,7 @@ const updateBlog = async function (req, res) {
 
 // ---------------delete blog-------------------//
 
-const deleteBlog = async function (req, res) {
+const deleteBlogs = async function (req, res) {
   try {
     let blogId = req.params.blogId;
     let blog = await blogModel.findById(blogId);
@@ -184,5 +185,5 @@ const deleteBlog = async function (req, res) {
       }
   }
 
-module.exports = {blog, deleteBlog, deleteBlogsByQuery, getblog, updateBlog};
+module.exports = {blogs, deleteBlogs, deleteBlogsByQuery, getblogs, updateBlogs};
 
