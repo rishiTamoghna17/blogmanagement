@@ -12,7 +12,7 @@ const authenticate = async function (req, res, next) {
   try {
     let token = req.headers["x-api-key"];
     if (!token)
-      return res.status(404).send({ status: false, msg: "token must be present" });
+      return res.status(404).send({ status: false, msg: "missing a mandatory token😒" });
 
     let decodedToken = jwt.verify(token, "suraj_tamoghna_kashish_tanweer", (err, decode)=>{
       if (err){
@@ -39,7 +39,6 @@ const authorization = async function (req, res, next) {
       return res.status(400).send({ status: false, msg: 'Please enter correct blogId Id' })
   }
     let blogData = await blogModel.findOne({ _id: blog });
-    console.log(blogData.authorId.toString());
     
     if (blogData.authorId.toString() != userLoggedIn) {
       return res.status(403).send({ status: false, msg: "You are not authrized" });
@@ -49,7 +48,9 @@ const authorization = async function (req, res, next) {
     res.status(500).send({ status: false, Error: error.message });
   }
 };
-//---------------------Special Authorization---------------------
+
+
+//---------------------Special Authorization---------------------//
 const specialAuthorization = async function (req, res, next){
   try {
     let data = req.query;
@@ -57,16 +58,14 @@ const specialAuthorization = async function (req, res, next){
     const token = req.headers["x-api-key"]; // we call headers with name x-api-key
     if (!token)
       res.status(401).send({ status: false, msg: "missing a mandatory token😒" });
-      let decodedToken = jwt.verify(token, "suraj_tamoghna_kashish_tanweer");
-      let userLoggedIn = decodedToken.userId;
-      let filter = {userLoggedIn,...data};
-    const { authorId, category, tags, subcategory } = data
+      let decodedToken = jwt.verify(token, "suraj_tamoghna_kashish_tanweer")
+      let authorId = decodedToken.userId;
+      const {category, tags, subcategory } = data
+      let filter = {authorId,...data};
       let getRecord = await blogModel.findOne(filter)
-      console.log(getRecord)
-      console.log(userLoggedIn )
       let userId = getRecord.authorId.toString();
-      console.log(userId)
-      if(userId.toString() != userLoggedIn) {
+      if(userId.toString() != authorId) {
+
         return res.status(403).send({ status: false, msg: "You are not authrized" });
       }
 next();
@@ -74,5 +73,34 @@ next();
   res.status(500).send({ status: false, Error: error.message });
 }
 }
+//  const specialAuthorization = async function (req, res, next){
+//   try {
 
-module.exports = { authenticate, authorization,specialAuthorization };
+//     let data = req.query
+//     let filter = { ...data }   //stores the query params in the object obj-destructure-object literals
+//     let checkBlog = await blogModel.findOne(filter)
+
+//     if (!checkBlog)
+//         return res.status(404).send({ status: false, msg: "no such blog exist...! " })
+
+//     if (checkBlog.isDeleted === true)
+//         return res.status(400).send({ status: false, msg: "blog is already deleted...!" })
+
+//     let blogId = checkBlog._id
+//     let deleteBlog = await blogModel.findOneAndUpdate(
+//         filter,
+//         { $set: { isDeleted: true, deletedAt: new Date() } },
+//         { new: true, upsert: true }
+//     ) 
+//     res.status(201).send({ status: true, data: deleteBlog })
+
+// } catch (err) {
+//     res.status(500).send({ status: false, msg: err.message })
+// }
+
+// }
+
+
+
+module.exports = { authenticate, authorization, specialAuthorization };
+

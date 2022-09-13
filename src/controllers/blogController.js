@@ -59,7 +59,7 @@ const getblogs = async function (req, res) {
     if (Object.keys(data).length === 0) {
       return res.status(400).send({ status: false, message: "Please give some data" });
     }
-    let filter = {isDeleted: false, isPublished: true,...data};
+    let filter = {isDeleted: false, isPublished: true, ...data};
     const { authorId, category, tags, subcategory } = data
 
     if (category) {
@@ -113,7 +113,7 @@ const updateBlogs = async function (req, res) {
 
     let updateBlog = await blogModel.findOneAndUpdate(
       { _id: blogId },
-      { $set: { title: title,body: body, isPublished: true, publishedAt: new Date() },
+      { $set: { title: title, body: body, isPublished: true, publishedAt: new Date() },
        $push: { tags: tags, subcategory: subcategory} },
       { new: true }
     );
